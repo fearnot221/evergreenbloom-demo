@@ -15,7 +15,7 @@
   <script src="main.js" defer></script>
 </head>
 <body data-active="hero">
-  <!-- 共用漸層、噴漆濾鏡與雲形 -->
+  <!-- 共用漸層與雲形（噴漆質感改由整頁的磨砂層提供，避免動畫時重算 SVG 濾鏡） -->
   <svg class="defs" aria-hidden="true" focusable="false">
     <defs>
       <radialGradient id="g-blue" cx="45%" cy="40%" r="70%">
@@ -33,14 +33,6 @@
       <linearGradient id="g-mint" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0" stop-color="#e3fff4"/><stop offset=".5" stop-color="#aeffdc"/><stop offset="1" stop-color="#bbffbb"/>
       </linearGradient>
-      <!-- 噴漆：邊緣微毛 + 顆粒白霧（只用在不會持續動的形狀上） -->
-      <filter id="spray" x="-5%" y="-5%" width="110%" height="110%">
-        <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="n"/>
-        <feDisplacementMap in="SourceGraphic" in2="n" scale="3" result="d"/>
-        <feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 -.38" result="dust"/>
-        <feComposite in="dust" in2="d" operator="in" result="dust-in"/>
-        <feMerge><feMergeNode in="d"/><feMergeNode in="dust-in"/></feMerge>
-      </filter>
       <path id="cloud" d="M50,150 H215 A42,42 0 0 0 225,68 A70,70 0 0 0 95,60 A45,45 0 0 0 50,150 Z"/>
     </defs>
   </svg>
@@ -75,13 +67,13 @@
     <section id="hero" class="slide hero">
       <div class="stage">
         <svg class="art" viewBox="0 0 1600 900" aria-hidden="true">
-          <g filter="url(#spray)"><g data-build="arches" data-dy="0" style="--t0:.2s"></g></g>
+          <g data-build="arches" data-dy="0" style="--t0:.2s"></g>
           <rect class="draw" pathLength="1" x="55" y="70" width="1490" height="700" fill="none" stroke="#ffffb9" stroke-width="4" style="--t0:0s"/>
         </svg>
         <div class="layer depth" style="--d:22"><svg class="art" viewBox="0 0 1600 900" aria-hidden="true"><g data-build="pine" data-x="390" data-y="150" data-s=".8667" style="--t0:.75s"></g></svg></div>
         <div class="layer depth" style="--d:30"><svg class="art" viewBox="0 0 1600 900" aria-hidden="true"><g data-build="sakura" data-x="760" data-y="140" data-s=".8333" style="--t0:.95s"></g></svg></div>
         <svg class="art" viewBox="0 0 1600 900" aria-hidden="true">
-          <g filter="url(#spray)"><rect class="rise" y="770" width="1600" height="140" fill="url(#g-mint)" stroke="#ffffb9" stroke-width="4"/></g>
+          <rect class="rise" y="770" width="1600" height="140" fill="url(#g-mint)" stroke="#ffffb9" stroke-width="4"/>
         </svg>
         <h1 class="hero-title">
           <span class="char depth" style="--x:33.4%;--y:52%;--s:13.1cqw;--r:-8deg;--d:44;--t0:1.55s">松</span>
@@ -96,7 +88,7 @@
     <section id="manifesto" class="slide manifesto">
       <div class="stage">
         <svg class="art" viewBox="0 0 1600 900" aria-hidden="true">
-          <g filter="url(#spray)"><g data-build="arches" data-dy="40" style="--t0:0s"></g></g>
+          <g data-build="arches" data-dy="40" style="--t0:0s"></g>
         </svg>
         <div class="layer depth" style="--d:60"><svg class="art" viewBox="0 0 1600 900" aria-hidden="true"><g data-build="pine" data-x="-80" data-y="90" data-s=".8667" style="--t0:.35s"></g></svg></div>
         <div class="layer depth" style="--d:80"><svg class="art" viewBox="0 0 1600 900" aria-hidden="true"><g data-build="sakura" data-x="1170" data-y="80" data-s=".9333" style="--t0:.5s"></g></svg></div>
