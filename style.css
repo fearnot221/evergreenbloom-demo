@@ -137,7 +137,8 @@ body[data-active="manifesto"] .white { --o: .65; }
 
 /* 景深：會動的樹與大字各自是一個合成圖層，main.js 直接寫 transform（不重繪 SVG） */
 .layer { position: absolute; inset: 0; }
-.depth { will-change: transform; }
+/* 只在電腦版預先升成合成圖層；觸控裝置不做視差，避免放大時記憶體爆掉 */
+@media (hover: hover) and (pointer: fine) { .depth { will-change: transform; } }
 
 /* 跨 03→04 的草地流帶：拉伸填滿兩頁高度，黃邊隨捲動描出（由 main.js 改寫 dashoffset） */
 .flow { position: relative; }
@@ -401,6 +402,14 @@ p {
   .js .hero.is-in::before { translate: 0 0; }
   .stage-left { left: 0; translate: 0 0; }
   .stage-right { left: auto; right: 0; translate: 0 0; }
+}
+
+/* ── 觸控裝置（手機、平板）：磨砂層不和整頁做混合運算、色霧不漂移，
+      減少常駐的 GPU 圖層，雙指放大時才不會耗盡記憶體 ── */
+@media (hover: none), (pointer: coarse) {
+  .grain { mix-blend-mode: normal; opacity: .07; }
+  .dust { opacity: .4; }
+  .haze { animation: none; }
 }
 
 /* ── 減少動態：直接顯示完成狀態，不漂移、不視差、不落花 ── */

@@ -1,5 +1,8 @@
 // 松櫻祭 style demo: builds the trees/arches, then drives reveal, parallax, petals and grain.
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Desktop = mouse/trackpad with hover. Touch devices skip Lenis and parallax: every parallax layer is a
+// full-stage GPU texture, and pinch-zooming re-rasterises them at zoom scale until mobile Safari runs out of memory.
+const desktop = matchMedia('(hover: hover) and (pointer: fine)').matches;
 const STROKE = 'stroke="#ffffb9" stroke-width="4"';
 
 // ── 1. Build SVG pieces (each part gets its own wrapper so intro + ambient motion don't fight) ──
@@ -63,7 +66,7 @@ root.setProperty('--speck', noise(256, (d, i) => {
 // ── 3. Petals: a slow diagonal gust that ties the sections together ──
 if (!reduce) {
   const layer = document.querySelector('.petals');
-  const count = innerWidth < 720 ? 9 : 16;
+  const count = desktop ? 16 : 7;
   const rnd = (a, b) => a + Math.random() * (b - a);
   layer.innerHTML = Array.from({ length: count }, () => {
     const dur = rnd(14, 26);
@@ -103,14 +106,14 @@ requestAnimationFrame(() => requestAnimationFrame(() => {
 // ── 5. Damped scrolling (Lenis): wheel input eases toward its target instead of jumping ──
 let lenis = null;
 // Desktop only (mouse/trackpad + hover); phones and tablets keep their native touch scrolling.
-if (!reduce && window.Lenis && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+if (!reduce && window.Lenis && desktop) {
   // Same setup as sitcon.org/2026 (Lenis defaults: lerp .1, wheelMultiplier 1), which the client cited as the reference feel.
   lenis = new Lenis({ autoRaf: true, anchors: true });
 }
 
-// ── 6. Parallax: every .depth element is its own compositor layer and gets a transform written here,
+// ── 6. Parallax (desktop only): every .depth element is its own compositor layer and gets a transform written here,
 //    in the same frame Lenis moves the page (no CSS-variable cascade, no SVG repaint, no layout reads) ──
-if (!reduce) {
+if (!reduce && desktop) {
   const flow = document.querySelector('.flow');
   const edges = flow.querySelectorAll('.edge');
   const layers = [...document.querySelectorAll('.depth')].map((el) => ({
@@ -162,12 +165,10 @@ if (!reduce) {
   addEventListener('resize', () => { measure(); queue(); });
   addEventListener('load', () => { measure(); queue(); });
   document.fonts.ready.then(() => { measure(); queue(); });
-  if (matchMedia('(pointer: fine)').matches) {
-    addEventListener('pointermove', (e) => {
-      tx = (e.clientX / innerWidth) * 2 - 1;
-      ty = (e.clientY / innerHeight) * 2 - 1;
-      queue();
-    }, { passive: true });
-  }
+  addEventListener('pointermove', (e) => {
+    tx = (e.clientX / innerWidth) * 2 - 1;
+    ty = (e.clientY / innerHeight) * 2 - 1;
+    queue();
+  }, { passive: true });
   queue();
 }
