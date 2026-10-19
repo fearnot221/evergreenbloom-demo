@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>松櫻祭 風格 Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 共用圖形：拱窗、松、櫻，與噴漆粉霧濾鏡 -->
+  <svg class="defs" aria-hidden="true" focusable="false">
+    <defs>
+      <radialGradient id="g-blue" cx="45%" cy="40%" r="70%">
+        <stop offset="0" stop-color="#b9dcff"/><stop offset=".6" stop-color="#97cbff"/><stop offset="1" stop-color="#8bc2fb"/>
+      </radialGradient>
+      <radialGradient id="g-green" cx="40%" cy="35%" r="75%">
+        <stop offset="0" stop-color="#dcffdc"/><stop offset=".55" stop-color="#bbffbb"/><stop offset="1" stop-color="#aef5ae"/>
+      </radialGradient>
+      <radialGradient id="g-pink" cx="40%" cy="35%" r="75%">
+        <stop offset="0" stop-color="#ffdcee"/><stop offset=".55" stop-color="#ffc1e0"/><stop offset="1" stop-color="#fbb4d7"/>
+      </radialGradient>
+      <linearGradient id="g-trunk" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#e2bebb"/><stop offset="1" stop-color="#d6b0ad"/>
+      </linearGradient>
+
+      <!-- 噴漆：邊緣微毛 + 顆粒白霧 -->
+      <filter id="spray" x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="3" result="d"/>
+        <feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 -.38" result="dust"/>
+        <feComposite in="dust" in2="d" operator="in" result="dust-in"/>
+        <feMerge><feMergeNode in="d"/><feMergeNode in="dust-in"/></feMerge>
+      </filter>
+
+      <path id="cloud" d="M50,150 H215 A42,42 0 0 0 225,68 A70,70 0 0 0 95,60 A45,45 0 0 0 50,150 Z"/>
+
+      <symbol id="arches" viewBox="0 0 1600 900">
+        <g fill="url(#g-blue)" stroke="#ffffb9" stroke-width="4">
+          <path d="M408,70 A352,350 0 0 0 408,770 Z"/>
+          <path d="M1192,70 A352,350 0 0 1 1192,770 Z"/>
+          <path d="M666,70 A256,350 0 0 0 666,770 Z"/>
+          <path d="M934,70 A256,350 0 0 1 934,770 Z"/>
+          <path d="M800,70 A115,350 0 0 0 800,770 Z"/>
+          <path d="M800,70 A115,350 0 0 1 800,770 Z"/>
+        </g>
+      </symbol>
+
+      <symbol id="pine" viewBox="0 0 600 800" overflow="visible">
+        <g stroke="#ffffb9" stroke-width="4">
+          <use href="#cloud" fill="url(#g-green)" transform="translate(-30 190)"/>
+          <use href="#cloud" fill="url(#g-green)" transform="translate(40 30) scale(1.2)"/>
+          <use href="#cloud" fill="url(#g-green)" transform="translate(190 120) scale(1.2)"/>
+          <rect x="210" y="330" width="130" height="470" fill="url(#g-trunk)"/>
+          <path d="M210,555 H340 M210,720 H340" fill="none"/>
+          <use href="#cloud" fill="url(#g-green)" transform="translate(240 420) scale(1.15)"/>
+        </g>
+      </symbol>
+
+      <symbol id="sakura" viewBox="0 0 600 800" overflow="visible">
+        <g stroke="#ffffb9" stroke-width="4" fill="url(#g-pink)">
+          <circle cx="250" cy="220" r="165"/>
+          <circle cx="410" cy="330" r="140"/>
+          <circle cx="260" cy="450" r="140"/>
+          <circle cx="410" cy="520" r="95"/>
+          <rect x="270" y="470" width="130" height="330" fill="url(#g-trunk)"/>
+          <path d="M270,640 H400" fill="none"/>
+        </g>
+      </symbol>
+    </defs>
+  </svg>
+
+  <main>
+    <!-- 01 主視覺 -->
+    <section class="slide hero" aria-label="松櫻祭">
+      <svg class="art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect width="1600" height="900" fill="#dcb5ff"/>
+        <g filter="url(#spray)">
+          <use href="#arches"/>
+          <rect x="55" y="70" width="1490" height="700" fill="none" stroke="#ffffb9" stroke-width="4"/>
+          <use href="#pine" x="390" y="150" width="520" height="693"/>
+          <use href="#sakura" x="760" y="140" width="500" height="667"/>
+          <rect y="770" width="1600" height="140" fill="#aeffdc" stroke="#ffffb9" stroke-width="4"/>
+        </g>
+        <g class="glow" font-family="'Noto Serif TC', serif" font-weight="700" fill="#fff">
+          <text x="430" y="560" font-size="210" transform="rotate(-8 530 480)">松</text>
+          <text x="1010" y="320" font-size="180" transform="rotate(9 1100 240)">櫻</text>
+          <text x="1100" y="640" font-size="72" transform="rotate(10 1140 610)">祭</text>
+        </g>
+      </svg>
+      <h1 class="sr-only">松櫻祭</h1>
+    </section>
+
+    <!-- 02 宣言 -->
+    <section class="slide manifesto">
+      <svg class="art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect width="1600" height="900" fill="#dcb5ff"/>
+        <g filter="url(#spray)">
+          <use href="#arches" y="40"/>
+          <use href="#pine" x="-80" y="90" width="520" height="693"/>
+          <use href="#sakura" x="1170" y="80" width="560" height="747"/>
+        </g>
+      </svg>
+      <div class="copy center">
+        <h2><span class="tag">松的堅忍，櫻的綻放。</span><span class="tag">在中央，把春天一屆一屆傳下去。</span></h2>
+        <p>一個祭典，也是一種參與校園的方式。松櫻祭希望讓學生、校友與訪客，在春天重新認識中央，並一起形塑校園文化。松櫻祭是由學生發起的春日校園祭典，讓校園風景、藝術文化與學生創意相遇，逐步長成屬於中央大學的春季傳統。</p>
+      </div>
+    </section>
+
+    <!-- 03 松 -->
+    <section class="slide pine">
+      <svg class="art" viewBox="0 0 1600 900" preserveAspectRatio="xMinYMid slice" aria-hidden="true">
+        <rect width="1600" height="900" fill="#dcb5ff"/>
+        <g filter="url(#spray)">
+          <polygon points="690,900 1600,580 1600,900" fill="#aeffdc"/>
+          <use href="#pine" x="200" y="100" width="560" height="747"/>
+        </g>
+        <text class="glow" x="110" y="810" font-family="'Noto Serif TC', serif" font-weight="700" font-size="300" fill="#fff">松</text>
+      </svg>
+      <div class="copy right">
+        <h2><span class="tag">堅忍・毅力</span><span class="tag">扎根，然後生長。</span></h2>
+        <p>松，代表堅忍與毅力：<br>中央的韌性、長久累積與深厚的學術根基。</p>
+      </div>
+    </section>
+
+    <!-- 04 櫻 -->
+    <section class="slide sakura">
+      <svg class="art" viewBox="0 0 1600 900" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+        <rect width="1600" height="900" fill="#dcb5ff"/>
+        <g filter="url(#spray)">
+          <polygon points="0,0 880,0 0,400" fill="#aeffdc"/>
+          <use href="#sakura" x="850" y="80" width="600" height="800"/>
+        </g>
+        <text class="glow" x="1140" y="820" font-family="'Noto Serif TC', serif" font-weight="700" font-size="300" fill="#fff">櫻</text>
+      </svg>
+      <div class="copy left">
+        <h2><span class="tag">延續・傳承・綻放</span><span class="tag">從這裡，向新意綻放。</span></h2>
+        <p>櫻，代表延續、傳承與綻放：<br>一屆接一屆，把春天交到下一群人手上。松與櫻相遇，讓既有的傳統向新的表達延伸。</p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
