@@ -11,7 +11,7 @@
   --ease: cubic-bezier(.22, 1, .36, 1);          /* 展開：快起慢收 */
   --bloom: cubic-bezier(.34, 1.4, .64, 1);       /* 綻放：輕微回彈 */
   --gutter: clamp(16px, 4vw, 56px);
-  --flat: .8;
+  --flat: .68;
 }
 
 * { box-sizing: border-box; margin: 0; }
