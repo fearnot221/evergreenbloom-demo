@@ -102,7 +102,8 @@ requestAnimationFrame(() => requestAnimationFrame(() => {
 
 // ── 5. Damped scrolling (Lenis): wheel input eases toward its target instead of jumping ──
 let lenis = null;
-if (!reduce && window.Lenis) {
+// Desktop only (mouse/trackpad + hover); phones and tablets keep their native touch scrolling.
+if (!reduce && window.Lenis && matchMedia('(hover: hover) and (pointer: fine)').matches) {
   // Same setup as sitcon.org/2026 (Lenis defaults: lerp .1, wheelMultiplier 1), which the client cited as the reference feel.
   lenis = new Lenis({ autoRaf: true, anchors: true });
 }
