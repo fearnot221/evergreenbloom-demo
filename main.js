@@ -103,16 +103,8 @@ requestAnimationFrame(() => requestAnimationFrame(() => {
 // ── 5. Damped scrolling (Lenis): wheel input eases toward its target instead of jumping ──
 let lenis = null;
 if (!reduce && window.Lenis) {
-  lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 0.9 });
-  const tick = (t) => { lenis.raf(t); requestAnimationFrame(tick); };
-  requestAnimationFrame(tick);
-  document.addEventListener('click', (e) => {
-    const a = e.target.closest('a[href^="#"]');
-    const target = a && document.querySelector(a.getAttribute('href'));
-    if (!target) return;
-    e.preventDefault();
-    lenis.scrollTo(target, { duration: 1.8, easing: (x) => 1 - Math.pow(1 - x, 4) });
-  });
+  // Same setup as sitcon.org/2026 (Lenis defaults: lerp .1, wheelMultiplier 1), which the client cited as the reference feel.
+  lenis = new Lenis({ autoRaf: true, anchors: true });
 }
 
 // ── 6. Parallax: every .depth element is its own compositor layer and gets a transform written here,
