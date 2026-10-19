@@ -62,6 +62,34 @@ root.setProperty('--speck', noise(256, (d, i) => {
   d[i] = d[i + 1] = d[i + 2] = 255;
   d[i + 3] = r > 0.955 ? 90 + Math.random() * 165 : 0;
 }));
+// Large, soft unevenness of the spray. A raster image (not an SVG filter) so pinch-zoom only stretches it
+// instead of re-rendering a giant filtered bitmap. Upscaling a 3×3 tiling and keeping the centre makes it seamless.
+{
+  const n = 8, scale = 32;   // 8 cells over a 720px tile ≈ 90px blotches, like the old fractal noise
+  const small = document.createElement('canvas');
+  small.width = small.height = n * 3;
+  const sctx = small.getContext('2d');
+  const cell = sctx.createImageData(n, n);
+  for (let i = 0; i < cell.data.length; i += 4) {
+    cell.data[i] = cell.data[i + 1] = cell.data[i + 2] = (84 + Math.random() * 88) | 0;   // low contrast, centred on mid-grey
+    cell.data[i + 3] = 255;
+  }
+  for (let x = 0; x < 3; x++) for (let y = 0; y < 3; y++) sctx.putImageData(cell, x * n, y * n);
+  const big = document.createElement('canvas');
+  big.width = big.height = n * scale;
+  const bctx = big.getContext('2d');
+  bctx.imageSmoothingQuality = 'high';
+  bctx.drawImage(small, n, n, n, n, 0, 0, n * scale, n * scale);
+  root.setProperty('--mottle', `url(${big.toDataURL()})`);
+}
+
+// ── 2b. While pinch-zoomed (phones, tablets, trackpad pinch), hide the full-screen decorative layers:
+//    at zoom they are re-rasterised at zoom scale, which is what runs mobile Safari out of memory. ──
+if (window.visualViewport) {
+  const onZoom = () => document.documentElement.classList.toggle('zoomed', visualViewport.scale > 1.05);
+  visualViewport.addEventListener('resize', onZoom);
+  onZoom();
+}
 
 // ── 3. Petals: a slow diagonal gust that ties the sections together ──
 if (!reduce) {
