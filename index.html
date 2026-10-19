@@ -14,18 +14,21 @@
   <svg class="defs" aria-hidden="true" focusable="false">
     <defs>
       <radialGradient id="g-blue" cx="45%" cy="40%" r="70%">
-        <stop offset="0" stop-color="#b9dcff"/><stop offset=".6" stop-color="#97cbff"/><stop offset="1" stop-color="#8bc2fb"/>
+        <stop offset="0" stop-color="#e8f4ff"/><stop offset=".6" stop-color="#97cbff"/><stop offset="1" stop-color="#7db6f3"/>
       </radialGradient>
       <radialGradient id="g-green" cx="40%" cy="35%" r="75%">
-        <stop offset="0" stop-color="#dcffdc"/><stop offset=".55" stop-color="#bbffbb"/><stop offset="1" stop-color="#aef5ae"/>
+        <stop offset="0" stop-color="#f2fff2"/><stop offset=".55" stop-color="#bbffbb"/><stop offset="1" stop-color="#9ceb9c"/>
       </radialGradient>
       <radialGradient id="g-pink" cx="40%" cy="35%" r="75%">
-        <stop offset="0" stop-color="#ffdcee"/><stop offset=".55" stop-color="#ffc1e0"/><stop offset="1" stop-color="#fbb4d7"/>
+        <stop offset="0" stop-color="#fff2f8"/><stop offset=".55" stop-color="#ffc1e0"/><stop offset="1" stop-color="#f5a3cc"/>
       </radialGradient>
       <linearGradient id="g-trunk" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0" stop-color="#e2bebb"/><stop offset="1" stop-color="#d6b0ad"/>
       </linearGradient>
 
+      <linearGradient id="g-mint" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#d9fff0"/><stop offset=".5" stop-color="#aeffdc"/><stop offset="1" stop-color="#bbffbb"/>
+      </linearGradient>
       <!-- 噴漆：邊緣微毛 + 顆粒白霧 -->
       <filter id="spray" x="-5%" y="-5%" width="110%" height="110%">
         <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="n"/>
@@ -76,13 +79,12 @@
     <!-- 01 主視覺 -->
     <section class="slide hero" aria-label="松櫻祭">
       <svg class="art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <rect width="1600" height="900" fill="#dcb5ff"/>
         <g filter="url(#spray)">
           <use href="#arches"/>
           <rect x="55" y="70" width="1490" height="700" fill="none" stroke="#ffffb9" stroke-width="4"/>
           <use href="#pine" x="390" y="150" width="520" height="693"/>
           <use href="#sakura" x="760" y="140" width="500" height="667"/>
-          <rect y="770" width="1600" height="140" fill="#aeffdc" stroke="#ffffb9" stroke-width="4"/>
+          <rect y="770" width="1600" height="140" fill="url(#g-mint)" stroke="#ffffb9" stroke-width="4"/>
         </g>
         <g class="glow" font-family="'Noto Serif TC', serif" font-weight="700" fill="#fff">
           <text x="430" y="560" font-size="210" transform="rotate(-8 530 480)">松</text>
@@ -96,7 +98,6 @@
     <!-- 02 宣言 -->
     <section class="slide manifesto">
       <svg class="art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <rect width="1600" height="900" fill="#dcb5ff"/>
         <g filter="url(#spray)">
           <use href="#arches" y="40"/>
           <use href="#pine" x="-80" y="90" width="520" height="693"/>
@@ -112,9 +113,8 @@
     <!-- 03 松 -->
     <section class="slide pine">
       <svg class="art" viewBox="0 0 1600 900" preserveAspectRatio="xMinYMid slice" aria-hidden="true">
-        <rect width="1600" height="900" fill="#dcb5ff"/>
         <g filter="url(#spray)">
-          <polygon points="690,900 1600,580 1600,900" fill="#aeffdc"/>
+          <polygon points="690,900 1600,580 1600,900" fill="url(#g-mint)"/>
           <use href="#pine" x="200" y="100" width="560" height="747"/>
         </g>
         <text class="glow" x="110" y="810" font-family="'Noto Serif TC', serif" font-weight="700" font-size="300" fill="#fff">松</text>
@@ -128,9 +128,8 @@
     <!-- 04 櫻 -->
     <section class="slide sakura">
       <svg class="art" viewBox="0 0 1600 900" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
-        <rect width="1600" height="900" fill="#dcb5ff"/>
         <g filter="url(#spray)">
-          <polygon points="0,0 880,0 0,400" fill="#aeffdc"/>
+          <polygon points="0,0 880,0 0,400" fill="url(#g-mint)"/>
           <use href="#sakura" x="850" y="80" width="600" height="800"/>
         </g>
         <text class="glow" x="1140" y="820" font-family="'Noto Serif TC', serif" font-weight="700" font-size="300" fill="#fff">櫻</text>

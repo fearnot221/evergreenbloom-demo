@@ -25,7 +25,7 @@ body::after {
   inset: 0;
   pointer-events: none;
   z-index: 10;
-  opacity: .32;
+  opacity: .7;
   mix-blend-mode: soft-light;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
@@ -47,6 +47,22 @@ html { scroll-snap-type: y proximity; }
   scroll-snap-align: start;
 }
 
+/* 噴漆底：紫底上噴藍、粉、白、黃、綠的霧，雙數頁左右鏡像 */
+.slide {
+  background:
+    radial-gradient(40% 45% at 15% 12%, rgb(151 203 255 / .6), transparent 70%),
+    radial-gradient(35% 50% at 88% 20%, rgb(255 193 224 / .75), transparent 70%),
+    radial-gradient(30% 35% at 52% 48%, rgb(255 255 255 / .4), transparent 70%),
+    radial-gradient(30% 25% at 56% 0%, rgb(255 255 185 / .5), transparent 70%),
+    radial-gradient(40% 40% at 82% 96%, rgb(187 255 187 / .4), transparent 70%),
+    radial-gradient(35% 40% at 8% 92%, rgb(255 193 224 / .55), transparent 70%),
+    var(--purple);
+}
+.slide:nth-child(even)::before {
+  content: ""; position: absolute; inset: 0; transform: scaleX(-1);
+  background: inherit;
+}
+
 .art { position: absolute; inset: 0; width: 100%; height: 100%; }
 
 .glow { filter: drop-shadow(0 0 8px #fff) drop-shadow(0 0 28px rgb(255 225 255 / .9)); }
@@ -66,7 +82,8 @@ h2 { display: flex; flex-direction: column; gap: .6rem; margin-bottom: 1.6rem; f
 .right h2, .left h2 { align-items: flex-start; }
 
 .tag {
-  background: var(--yellow);
+  /* 黃色也是噴上去的：中心較亮、邊緣較濃 */
+  background: radial-gradient(120% 140% at 35% 40%, #ffffe6, var(--yellow) 55%, #fff6a0);
   color: var(--ink);
   font-size: clamp(1.4rem, 3.2vw, 2.6rem);
   letter-spacing: .14em;
