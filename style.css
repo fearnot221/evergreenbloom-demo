@@ -317,16 +317,15 @@ body[data-active="manifesto"] .white { --o: .65; }
   max-width: 47rem;
   padding: 2rem var(--gutter);
 }
-/* 白字墊一層柔紫光暈，壓過淺藍拱窗與白色高光 */
-.copy::before {
+/* 宣言頁的白字壓在淺藍拱窗上，墊一層柔紫光暈；松／櫻頁文字本來就在紫底上，不加（否則會把草地流帶染出一條分界） */
+.copy.center::before {
   content: "";
   position: absolute;
-  inset: -12% -8%;
+  inset: 0 -6%;
   z-index: -1;
-  background: radial-gradient(closest-side, rgb(184 140 236 / .5), rgb(184 140 236 / .22) 60%, transparent);
+  background: radial-gradient(closest-side, rgb(176 132 232 / .62), rgb(176 132 232 / .3) 65%, transparent);
   pointer-events: none;
 }
-.copy.center::before { inset: 0 -6%; background: radial-gradient(closest-side, rgb(176 132 232 / .62), rgb(176 132 232 / .3) 65%, transparent); }
 .copy.center { justify-self: center; max-width: 52rem; text-align: center; }
 .copy.right { justify-self: end; margin-right: 4vw; }
 .copy.left { justify-self: start; margin-left: 5vw; }
