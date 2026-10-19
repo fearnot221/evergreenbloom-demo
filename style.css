@@ -15,7 +15,10 @@
 
 * { box-sizing: border-box; margin: 0; }
 
-html { scroll-behavior: smooth; scroll-snap-type: y proximity; }
+html { scroll-behavior: smooth; }
+/* Lenis 接手時改由它做阻尼捲動 */
+html.lenis, html.lenis body { height: auto; }
+html.lenis { scroll-behavior: auto; }
 
 body {
   background: var(--purple);
@@ -118,7 +121,6 @@ body[data-active="manifesto"] .white { --o: .65; }
   min-height: 100svh;
   overflow: hidden;
   display: grid;
-  scroll-snap-align: start;
 }
 .stage {
   position: absolute;
@@ -141,6 +143,21 @@ body[data-active="manifesto"] .white { --o: .65; }
 }
 .depth-copy { transform: translateY(calc(var(--p, 0) * 36px)); }
 
+/* 跨 03→04 的草地流帶：拉伸填滿兩頁高度，黃邊隨捲動描出（--flow 由 main.js 給） */
+.flow { position: relative; }
+.ribbon { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }  /* 在插畫之上、文字之下 */
+.ribbon .edge {
+  fill: none;
+  stroke: var(--yellow);
+  stroke-width: 3.5;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--flow, 1));
+}
+
+/* 大字另放一層舞台，疊在草地流帶之上 */
+.stage.front { z-index: 2; }
+
 /* 發光大字（HTML，方便手機重新排位與閱讀） */
 .hero-title { font: inherit; }
 .char {
@@ -160,7 +177,7 @@ body[data-active="manifesto"] .white { --o: .65; }
 }
 
 /* ── 進場：SEED → UNFOLD → BLOSSOM ── */
-.unfold, .pop, .grow, .rise, .sweep { transform-box: fill-box; }
+.unfold, .pop, .grow, .rise { transform-box: fill-box; }
 .js .unfold {
   scale: 0 1;
   transition: scale 1.3s var(--ease) calc(var(--t0, 0s) + var(--i) * 140ms);
@@ -187,11 +204,7 @@ body[data-active="manifesto"] .white { --o: .65; }
 }
 
 .js .rise { translate: 0 140px; transition: translate 1.2s var(--ease) .1s; }
-.js .sweep {
-  translate: 0 var(--from);
-  opacity: 0;
-  transition: translate 1.4s var(--ease) var(--t0, 0s), opacity .8s ease var(--t0, 0s);
-}
+
 
 .js .char {
   opacity: 0;
@@ -218,9 +231,9 @@ body[data-active="manifesto"] .white { --o: .65; }
 }
 
 .js .is-in :is(.unfold, .grow, .pop, .char) { scale: 1; }
-.js .is-in :is(.pop, .char, .line, .sweep) { opacity: 1; }
+.js .is-in :is(.pop, .char, .line) { opacity: 1; }
 .js .is-in :is(.char, .line) { filter: none; }
-.js .is-in :is(.rise, .sweep, .line) { translate: 0 0; }
+.js .is-in :is(.rise, .line) { translate: 0 0; }
 .js .is-in .draw { stroke-dashoffset: 0; }
 .js .is-in .tag { clip-path: inset(0 0 0 0); }
 

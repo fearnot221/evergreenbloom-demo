@@ -100,8 +100,23 @@ requestAnimationFrame(() => requestAnimationFrame(() => {
   document.body.classList.add('ready');
 }));
 
-// ── 5. Parallax: scroll depth for every section, pointer depth on the hero ──
+// ── 5. Damped scrolling (Lenis): wheel input eases toward its target instead of jumping ──
+if (!reduce && window.Lenis) {
+  const lenis = new Lenis({ lerp: 0.075, wheelMultiplier: 0.9 });
+  const tick = (t) => { lenis.raf(t); requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href^="#"]');
+    const target = a && document.querySelector(a.getAttribute('href'));
+    if (!target) return;
+    e.preventDefault();
+    lenis.scrollTo(target, { duration: 1.8, easing: (x) => 1 - Math.pow(1 - x, 4) });
+  });
+}
+
+// ── 6. Parallax: scroll depth for every section, pointer depth on the hero, ribbon drawn by scroll ──
 if (!reduce) {
+  const flow = document.querySelector('.flow');
   let tx = 0, ty = 0, mx = 0, my = 0, queued = false;
   const frame = () => {
     queued = false;
@@ -111,6 +126,8 @@ if (!reduce) {
       if (r.bottom < -vh || r.top > vh * 2) continue;
       s.style.setProperty('--p', ((r.top + r.height / 2 - vh / 2) / vh).toFixed(4));
     }
+    const f = flow.getBoundingClientRect();
+    flow.style.setProperty('--flow', Math.min(1, Math.max(0, ((vh - f.top) / f.height) * 1.15)).toFixed(4));
     mx += (tx - mx) * 0.08;
     my += (ty - my) * 0.08;
     hero.style.setProperty('--mx', mx.toFixed(4));
