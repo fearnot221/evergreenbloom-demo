@@ -11,6 +11,7 @@
   --ease: cubic-bezier(.22, 1, .36, 1);          /* 展開：快起慢收 */
   --bloom: cubic-bezier(.34, 1.4, .64, 1);       /* 綻放：輕微回彈 */
   --gutter: clamp(16px, 4vw, 56px);
+  --flat: .8;
 }
 
 * { box-sizing: border-box; margin: 0; }
@@ -134,16 +135,11 @@ body[data-active="manifesto"] .white { --o: .65; }
 }
 .art { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; }
 
-/* 景深：捲動（--p）與滑鼠（--mx/--my）共同推動，--d 越大越靠前 */
-.depth {
-  transform: translate(
-    calc(var(--mx, 0) * var(--d) * -.5px),
-    calc((var(--p, 0) - var(--my, 0) * .3) * var(--d) * 1px)
-  );
-}
-.depth-copy { transform: translateY(calc(var(--p, 0) * 36px)); }
+/* 景深：會動的樹與大字各自是一個合成圖層，main.js 直接寫 transform（不重繪 SVG） */
+.layer { position: absolute; inset: 0; }
+.depth { will-change: transform; }
 
-/* 跨 03→04 的草地流帶：拉伸填滿兩頁高度，黃邊隨捲動描出（--flow 由 main.js 給） */
+/* 跨 03→04 的草地流帶：拉伸填滿兩頁高度，黃邊隨捲動描出（由 main.js 改寫 dashoffset） */
 .flow { position: relative; }
 .ribbon { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }  /* 在插畫之上、文字之下 */
 .ribbon .edge {
@@ -152,7 +148,7 @@ body[data-active="manifesto"] .white { --o: .65; }
   stroke-width: 3.5;
   vector-effect: non-scaling-stroke;
   stroke-dasharray: 1;
-  stroke-dashoffset: calc(1 - var(--flow, 1));
+  stroke-dashoffset: 0;   /* main.js 隨捲動改寫 */
 }
 
 /* 大字另放一層舞台，疊在草地流帶之上 */
@@ -169,6 +165,7 @@ body[data-active="manifesto"] .white { --o: .65; }
   font-size: var(--s);
   font-weight: 700;
   line-height: 1;
+  scale: 1 var(--flat);   /* 原稿的字偏扁 */
   color: #fff;
   text-shadow:
     0 0 .06em #fff,
@@ -208,7 +205,7 @@ body[data-active="manifesto"] .white { --o: .65; }
 
 .js .char {
   opacity: 0;
-  scale: .86;
+  scale: .86 calc(.86 * var(--flat));
   filter: blur(14px);
   transition:
     opacity 1.2s var(--ease) var(--t0, 0s),
@@ -230,7 +227,8 @@ body[data-active="manifesto"] .white { --o: .65; }
     filter 1s var(--ease) calc(.8s + var(--i) * 110ms);
 }
 
-.js .is-in :is(.unfold, .grow, .pop, .char) { scale: 1; }
+.js .is-in :is(.unfold, .grow, .pop) { scale: 1; }
+.js .is-in .char { scale: 1 var(--flat); }
 .js .is-in :is(.pop, .char, .line) { opacity: 1; }
 .js .is-in :is(.char, .line) { filter: none; }
 .js .is-in :is(.rise, .line) { translate: 0 0; }
@@ -399,7 +397,8 @@ p {
     position: absolute;
     inset: auto 0 0;
     height: calc(16svh + 2px);
-    background: linear-gradient(160deg, #c6ffe6, var(--mint) 60%, var(--green));
+    /* 對齊舞台地面底邊在可見範圍內的漸層色（#aeffdc → #bbffbb），避免接縫 */
+    background: linear-gradient(90deg, #b1ffd8, #b8ffc6);
   }
   .js .hero::before { translate: 0 100%; transition: translate 1.2s var(--ease) .1s; }
   .js .hero.is-in::before { translate: 0 0; }
@@ -411,6 +410,6 @@ p {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
-  .depth, .depth-copy { transform: none !important; }
+  .depth { transform: none !important; }
   .petals { display: none; }
 }

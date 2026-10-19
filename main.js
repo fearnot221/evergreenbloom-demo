@@ -101,8 +101,9 @@ requestAnimationFrame(() => requestAnimationFrame(() => {
 }));
 
 // ── 5. Damped scrolling (Lenis): wheel input eases toward its target instead of jumping ──
+let lenis = null;
 if (!reduce && window.Lenis) {
-  const lenis = new Lenis({ lerp: 0.075, wheelMultiplier: 0.9 });
+  lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 0.9 });
   const tick = (t) => { lenis.raf(t); requestAnimationFrame(tick); };
   requestAnimationFrame(tick);
   document.addEventListener('click', (e) => {
@@ -114,31 +115,60 @@ if (!reduce && window.Lenis) {
   });
 }
 
-// ── 6. Parallax: scroll depth for every section, pointer depth on the hero, ribbon drawn by scroll ──
+// ── 6. Parallax: every .depth element is its own compositor layer and gets a transform written here,
+//    in the same frame Lenis moves the page (no CSS-variable cascade, no SVG repaint, no layout reads) ──
 if (!reduce) {
   const flow = document.querySelector('.flow');
-  let tx = 0, ty = 0, mx = 0, my = 0, queued = false;
+  const edges = flow.querySelectorAll('.edge');
+  const layers = [...document.querySelectorAll('.depth')].map((el) => ({
+    el,
+    d: parseFloat(el.style.getPropertyValue('--d')),
+    slide: el.closest('.slide'),
+    pointer: !!el.closest('.hero'),
+  }));
+  let boxes = new Map(), flowBox = { top: 0, height: 1 };
+  const measure = () => {
+    const y = scrollY;
+    boxes = new Map(slides.map((s) => {
+      const r = s.getBoundingClientRect();
+      return [s, { top: r.top + y, height: r.height }];
+    }));
+    const f = flow.getBoundingClientRect();
+    flowBox = { top: f.top + y, height: f.height };
+  };
+
+  let tx = 0, ty = 0, mx = 0, my = 0, lastFlow = -1, queued = false;
   const frame = () => {
     queued = false;
     const vh = innerHeight;
-    for (const s of slides) {
-      const r = s.getBoundingClientRect();
-      if (r.bottom < -vh || r.top > vh * 2) continue;
-      s.style.setProperty('--p', ((r.top + r.height / 2 - vh / 2) / vh).toFixed(4));
-    }
-    const f = flow.getBoundingClientRect();
-    flow.style.setProperty('--flow', Math.min(1, Math.max(0, ((vh - f.top) / f.height) * 1.15)).toFixed(4));
+    const y = lenis ? lenis.animatedScroll : scrollY;
     mx += (tx - mx) * 0.08;
     my += (ty - my) * 0.08;
-    hero.style.setProperty('--mx', mx.toFixed(4));
-    hero.style.setProperty('--my', my.toFixed(4));
+    for (const l of layers) {
+      const b = boxes.get(l.slide);
+      const p = (b.top - y + b.height / 2 - vh / 2) / vh;
+      if (p < -2 || p > 2) continue;
+      const x = l.pointer ? -mx * l.d * 0.5 : 0;
+      const dy = (p - (l.pointer ? my * 0.3 : 0)) * l.d;
+      l.el.style.transform = `translate3d(${x.toFixed(2)}px, ${dy.toFixed(2)}px, 0)`;
+    }
+    const fl = Math.min(1, Math.max(0, ((vh - (flowBox.top - y)) / flowBox.height) * 1.15));
+    if (Math.abs(fl - lastFlow) > 0.0005) {
+      lastFlow = fl;
+      edges.forEach((e) => (e.style.strokeDashoffset = (1 - fl).toFixed(4)));
+    }
     if (Math.abs(tx - mx) > 0.001 || Math.abs(ty - my) > 0.001) queue();
   };
   const queue = () => {
     if (!queued) { queued = true; requestAnimationFrame(frame); }
   };
-  addEventListener('scroll', queue, { passive: true });
-  addEventListener('resize', queue);
+
+  measure();
+  if (lenis) lenis.on('scroll', frame);
+  else addEventListener('scroll', queue, { passive: true });
+  addEventListener('resize', () => { measure(); queue(); });
+  addEventListener('load', () => { measure(); queue(); });
+  document.fonts.ready.then(() => { measure(); queue(); });
   if (matchMedia('(pointer: fine)').matches) {
     addEventListener('pointermove', (e) => {
       tx = (e.clientX / innerWidth) * 2 - 1;
